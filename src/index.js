@@ -98,7 +98,9 @@ function forwardResponseToApiGateway (server, response, resolver) {
         })
 
       const contentType = getContentType({ contentTypeHeader: headers['content-type'] })
-      const isBase64Encoded = isContentTypeBinaryMimeType({ contentType, binaryMimeTypes: server._binaryTypes })
+      const isBinaryMimeType = isContentTypeBinaryMimeType({ contentType, binaryMimeTypes: server._binaryTypes })
+      const isGzipped = headers['content-encoding'] === 'gzip'
+      const isBase64Encoded = isBinaryMimeType || isGzipped
       const body = bodyBuffer.toString(isBase64Encoded ? 'base64' : 'utf8')
       const successResponse = {statusCode, body, headers, isBase64Encoded}
 
